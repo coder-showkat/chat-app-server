@@ -4,7 +4,7 @@ exports.addMessage = async (req, res) => {
     try {
         const newMessage = new Message({
             chatId: req.body.chatId,
-            senderId: req.body.senderId,
+            senderId: req.user._id,
             text: req.body.text,
         })
         await newMessage.save();

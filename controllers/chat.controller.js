@@ -1,13 +1,17 @@
 const Chat = require("../models/chat.model");
+const User = require("../models/user.model");
 
 exports.createChat = async (req, res) => {
+    const username = req.params.username;
     try {
+        const findUser = await User.findOne({username});
+        if (!findUser) throw new Error("No user by this username");
         const newChat = new Chat({
-            members: [req.body.senderId, req.body.receiverId]
+            members: [req.user._id, findUser._id]
         });
 
         await newChat.save();
-        res.send(newChat);
+        res.status(201).send(newChat);
     
     } catch (error) {
         res.status(500).send({
@@ -22,7 +26,7 @@ exports.createChat = async (req, res) => {
 exports.userChats = async (req, res) => {
     try {
         const chat = await Chat.find({
-            members: {$in: [req.params.userId]}
+            members: {$in: [req.user._id]}
         })
 
         res.send(chat);
@@ -40,7 +44,7 @@ exports.findChat = async (req, res) => {
         const chat = await Chat.findOne({
             members: {$all: [req.params.firstId, req.params.secondId]}
         });
-
+        
         res.send(chat);
     } catch (error) {
         res.status(500).send({
