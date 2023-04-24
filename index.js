@@ -8,8 +8,9 @@ const server = app.listen(port, () => {
 })
 
 const io = socket(server, {
+    path:"/socket",
     cors: {
-        origin: "https://chat-app-sam.netlify.app/",
+        origin: "https://chat-app-sam.netlify.app",
         credentials: true,
     }
 })
