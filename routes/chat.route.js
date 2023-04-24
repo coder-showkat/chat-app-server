@@ -4,7 +4,7 @@ require("../config/passport");
 
 const router = require("express").Router();
 
-router.post("/:username", passport.authenticate('jwt', { session: false }), createChat);
+router.post("/:email", passport.authenticate('jwt', { session: false }), createChat);
 router.get("/", passport.authenticate('jwt', { session: false }), userChats);
 router.get("/find/:firstId/:secondId", findChat);
 

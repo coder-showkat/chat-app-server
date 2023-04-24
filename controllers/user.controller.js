@@ -1,24 +1,29 @@
+const cloudinary = require('cloudinary').v2;
 const bcrypt = require("bcrypt");
 const User = require("../models/user.model");
 const jwt = require("jsonwebtoken");
+require("../config/cloudinary");
 require("dotenv").config();
+
 
 exports.registerUser = async (req, res) => {
   try {
-    const username = req.body.username;
+    const avatar = req.file.path;
+    const fullname = req.body.fullname;
     const email = req.body.email;
-    const user = await User.findOne({ username });
-    if (user) throw new Error("User already exists");
+    const user = await User.findOne({ email });
+    if (user) throw new Error("Email already used in different account");
     else {
       const password = await bcrypt.hash(req.body.password, 10);
-      const newUser = new User({ username, email, password });
+      const newUser = new User({ avatar, fullname, email, password });
       await newUser.save();
-      res.send({
+      res.status(201).send({
         status: 201,
         message: "Register Success",
       });
     }
   } catch (error) {
+    await cloudinary.uploader.destroy(req.file.filename); 
     res.status(400).send({
       status: 400,
       error: error.message,
@@ -28,8 +33,8 @@ exports.registerUser = async (req, res) => {
 
 exports.loginUser = async (req, res) => {
   try {
-    const username = req.body.username;
-    const user = await User.findOne({ username });
+    const email = req.body.email;
+    const user = await User.findOne({ email });
     if (!user) throw new Error("Wrong credential!");
     else {
       const password = await bcrypt.compare(req.body.password, user.password);
@@ -37,7 +42,7 @@ exports.loginUser = async (req, res) => {
       else {
         const payload = {
           id: user._id,
-          username: user.username,
+          email: user.email,
         };
 
         const privateKey = process.env.JWT_PRIVATE_KEY;
@@ -72,8 +77,8 @@ exports.getConnectionInfo = async (req, res) => {
   try {
     const user = await User.findOne({ _id });
     if (!user) throw new Error("No user found");
-    const { username } = user;
-    res.send(username);
+    const { fullname, avatar } = user;
+    res.send({fullname, avatar});
   } catch (error) {
     res.status(400).send({
       status: 400,

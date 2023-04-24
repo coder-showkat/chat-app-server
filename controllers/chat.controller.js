@@ -2,10 +2,10 @@ const Chat = require("../models/chat.model");
 const User = require("../models/user.model");
 
 exports.createChat = async (req, res) => {
-    const username = req.params.username;
+    const email = req.params.email;
     try {
-        const findUser = await User.findOne({username});
-        if (!findUser) throw new Error("No user by this username");
+        const findUser = await User.findOne({email});
+        if (!findUser) throw new Error("No user by this email");
         const newChat = new Chat({
             members: [req.user._id, findUser._id]
         });
