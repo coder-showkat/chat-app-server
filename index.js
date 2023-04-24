@@ -4,12 +4,12 @@ const socket = require("socket.io");
 const port = process.env.PORT || 5000;
 
 const server = app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
+    console.log(`Server is running at ${port}`);
 })
 
 const io = socket(server, {
     cors: {
-        origin: "http://localhost:5173",
+        origin: "https://chat-app-sam.netlify.app/",
         credentials: true,
     }
 })
