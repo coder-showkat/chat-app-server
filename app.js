@@ -9,18 +9,6 @@ require("./config/db");
 
 // middleware
 app.use(cors());
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header(
-    "Access-Control-Allow-Methods",
-    "GET, HEAD, OPTIONS, POST, PUT, DELETE"
-  );
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-with, Content-Type, Accept, Authorization"
-  );
-  next();
-});
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
